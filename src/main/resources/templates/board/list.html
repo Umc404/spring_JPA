@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+
+<div layout:fragment="content">
+  <div class="container-md">
+    <h1>Board List</h1>
+    <table class="table table-striped table-hover">
+      <thead>
+      <th>#</th>
+      <th>title</th>
+      <th>writer</th>
+      <th>regDate</th>
+      </thead>
+      <tbody>
+      <tr th:each="bvo:${list}">
+        <td>[[${bvo.bno}]]</td>
+        <td>
+          <a th:href="@{/board/detail(bno=${bvo.bno})}">
+            [[${bvo.title}]]
+          </a>
+        </td>
+        <td>[[${bvo.writer}]]</td>
+        <td>[[${#strings.substring(bvo.regAt,0,10) }]]</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
