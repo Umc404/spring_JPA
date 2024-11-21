@@ -6,6 +6,9 @@ import com.ezen.boot_JPA.entity.Board;
 import com.ezen.boot_JPA.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +30,7 @@ public class BoardServiceImpl implements BoardService {
         return boardRepository.save(convertDtoToEntity(bdto)).getBno();
     }
 
-    @Override
+  /*  @Override
     public List<BoardDTO> getList() {
         // 컨트롤러로 보내야 하는 리턴은 List<BoardDTO>
         // DB에서 가져오는 리턴은 List<Board>  =>  BoardDTO 객체로 변환
@@ -36,16 +39,23 @@ public class BoardServiceImpl implements BoardService {
         List<Board> boardList = boardRepository.findAll(
                 Sort.by(Sort.Direction.DESC, "bno"));
 
-        /*List<BoardDTO> boardDTOList = new ArrayList<>();
-        for(Board board : boardList) {
-            boardDTOList.add(convertEntityToDto(board));
-        }*/
-
         List<BoardDTO> boardDTOList = boardList.stream()
                 .map(b -> convertEntityToDto(b)).toList();
 
         return boardDTOList;
     }
+*/
+    @Override
+    public Page<BoardDTO> getList(int pageNo) {
+        // pageNo = 0 부터 시작. 근데 표기는 1임
+        // 0 => limit 0, 10 / 1 => limit 10, 10
+        Pageable pageable = PageRequest.of(pageNo, 10,
+                Sort.by("bno").descending());
+        Page<Board> list = boardRepository.findAll(pageable);
+        Page<BoardDTO> bdtoList = list.map(b -> convertEntityToDto(b));
+        return bdtoList;
+    }
+
 
     @Override
     public Object getDetail(long bno) {

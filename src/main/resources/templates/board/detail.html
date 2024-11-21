@@ -31,5 +31,56 @@
   <form action="/board/delete" method="get" id="delForm">
     <input type="hidden" name="bno" th:value="${bdto.bno}">
   </form>
+  <!--/* post */-->
+  <div class="input-group mb-3">
+      <span class="input-group-text" id="cmtWriter"> jpa writer
+      </span>
+    <input type="text" id="cmtText" class="form-control" placeholder="write comment.." aria-label="Username" aria-describedby="basic-addon1">
+    <button type="button" id="cmtAdd" class="btn btn-secondary">Post</button>
+  </div>
+
+  <!--/* spread */-->
+  <ul class="list-group list-group-flush" id="cmtListArea">
+    <li class="list-group-item">
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">Comment name</div>
+        Content
+      </div>
+      <span class="badge text-bg-primary rounded-pill">regDate</span>
+    </li>
+  </ul>
+
+  <!--/* moreBtn */-->
+  <div>
+    <button type="button" id="moreBtn" data-page="1" class="btn btn-dark" style="visibility: hidden">More +</button>
+  </div>
+
+  <!--/* modal line */-->
+  <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="cmtWriterMod"></h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <input type="text" class="form-control" id="cmtTextMod">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" id="cmtModBtn" class="btn btn-primary">Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script th:inline="javascript">
+    let bnoVal = [[${bdto.bno}]]
+    console.log(bnoVal);
+  </script>
   <script th:src="@{/js/boardDetail.js}"></script>
+  <script th:src="@{/js/boardComment.js}"></script>
+  <script>
+    spreadCommentList(bnoVal);
+  </script>
 </div>
+
