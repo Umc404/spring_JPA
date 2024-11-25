@@ -21,7 +21,7 @@ class BootJpaApplicationTests {
 					.content("Test Content " + i)
 					.build();
 
-			boardService.insert(bdto);
+//			boardService.insert(bdto);
 		}
 	}
 

@@ -1,7 +1,10 @@
 package com.ezen.boot_JPA.controller;
 
 import com.ezen.boot_JPA.dto.BoardDTO;
+import com.ezen.boot_JPA.dto.BoardFileDTO;
+import com.ezen.boot_JPA.dto.FileDTO;
 import com.ezen.boot_JPA.dto.PagingVO;
+import com.ezen.boot_JPA.handler.FileHandler;
 import com.ezen.boot_JPA.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -22,17 +26,30 @@ import java.util.List;
 @Controller
 public class BoardController {
     private final BoardService boardService;
+    private final FileHandler fileHandler;
 
     @GetMapping("/register")
     public void register() {    }
 
+//    @PostMapping("/register")
+//    public String register(BoardDTO bdto) {
+//        log.info("boardDTO > {}", bdto);
+//        // insert, update, delete => return 1 row
+//        // jpa insert, update, delete => return id
+//        Long bno = boardService.insert(bdto);
+//        log.info(">>>> isOk > {}", bno > 0? "Ok":"Fail");
+//        return "/index";
+//    }
+
     @PostMapping("/register")
-    public String register(BoardDTO bdto) {
-        log.info("boardDTO > {}", bdto);
-        // insert, update, delete => return 1 row
-        // jpa insert, update, delete => return id
-        Long bno = boardService.insert(bdto);
-        log.info(">>>> isOk > {}", bno > 0? "Ok":"Fail");
+    public String register(BoardDTO bdto, @RequestParam(value = "files", required = false)
+                            MultipartFile[] files) {
+        List<FileDTO> flist = null;
+        if(files!= null && files[0].getSize() > 0) {
+            // 파일 핸들러 작업
+            flist = fileHandler.uploadFiles(files);
+        }
+        long bno = boardService.insert(new BoardFileDTO(bdto, flist));
         return "/index";
     }
 
@@ -69,13 +86,20 @@ public class BoardController {
     }
 
     @GetMapping("/detail")
-    public void detail(@RequestParam("bno")long bno, Model m) {
-        m.addAttribute("bdto", boardService.getDetail(bno));
+    public void detail(@RequestParam("bno")Long bno, Model m) {
+        BoardFileDTO boardFileDTO = boardService.getDetail(bno);
+        m.addAttribute("boardFileDTO", boardFileDTO);
     }
 
     @PostMapping("/modify")
-    public String modify(BoardDTO bdto, RedirectAttributes redirectAttributes) {
-        Long bno = boardService.modify(bdto);
+    public String modify(BoardDTO bdto, @RequestParam(name = "files", required = false)
+                MultipartFile[] files, RedirectAttributes redirectAttributes) {
+        List<FileDTO> flist = null;
+        if(files != null && files[0].getSize() > 0) {
+            flist = fileHandler.uploadFiles(files);
+        }
+
+        Long bno = boardService.modify(new BoardFileDTO(bdto, flist));
         redirectAttributes.addAttribute("bno", bdto.getBno());
         log.info(">>> modify setting > {}", bno);
         return "redirect:/board/detail";

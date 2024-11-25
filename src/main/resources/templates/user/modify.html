@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+
+<div layout:fragment="content">
+    <div class="container-md">
+        <h1>SpringBoot_JPA User info modify</h1>
+        [[${#authentication.getPrincipal()}]]
+        <hr>
+        [[${#authentication.getPrincipal().userDTO}]]
+        [[${#authentication.getPrincipal().userDTO.nickName}]]
+        <hr>
+        <form action="/user/modify" method="post">
+            <div class="mb-3">
+                <label for="e" class="form-label">email</label>
+                <input type="text" class="form-control" id="e" name="email" placeholder="email.." th:value="${#authentication.getPrincipal().userDTO.email}" readonly>
+            </div>
+            <div class="mb-3">
+                <label for="p" class="form-label">password</label>
+                <input type="password" class="form-control" id="p" name="pwd" placeholder="password..">
+            </div>
+            <div class="mb-3">
+                <label for="n" class="form-label">nickName</label>
+                <input type="text" class="form-control" id="n" name="nickName" placeholder="nickname.." th:value="${#authentication.getPrincipal().userDTO.nickName}">
+            </div>
+            <button type="submit" class="btn btn-primary">Update</button>
+            <a href="/user/delete"><button type="button" class="btn btn-danger">Delete</button></a>
+        </form>
+    </div>
+</div>

@@ -2,8 +2,12 @@ package com.ezen.boot_JPA.service;
 
 
 import com.ezen.boot_JPA.dto.BoardDTO;
+import com.ezen.boot_JPA.dto.BoardFileDTO;
+import com.ezen.boot_JPA.dto.FileDTO;
 import com.ezen.boot_JPA.entity.Board;
+import com.ezen.boot_JPA.entity.File;
 import com.ezen.boot_JPA.repository.BoardRepository;
+import com.ezen.boot_JPA.repository.FileRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -11,8 +15,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,13 +25,22 @@ import java.util.Optional;
 @Service
 public class BoardServiceImpl implements BoardService {
     private final BoardRepository boardRepository;
-
+    private final FileRepository fileRepository;
     @Override
     public Long insert(BoardDTO bdto) {
         // 저장 객체는 Board
         // save() : insert 후 저장 객체의 id를 리턴. 괄호 안에 엔티티를 넣어야함.
         // save() Entity 객체를 파라미터로 전송
         return boardRepository.save(convertDtoToEntity(bdto)).getBno();
+    }
+
+    public long fileRemove(String uuid) {
+        Optional<File> optional = fileRepository.findById(uuid);
+        if(optional.isPresent()) {
+            fileRepository.deleteById(uuid);
+            return optional.get().getBno();
+        }
+        return 0;
     }
 
   /*  @Override
@@ -44,7 +57,23 @@ public class BoardServiceImpl implements BoardService {
 
         return boardDTOList;
     }
-*/
+
+
+*/    @Transactional
+      @Override
+      public long insert(BoardFileDTO boardFileDTO) {
+        long bno = insert(boardFileDTO.getBoardDTO());
+        if(bno > 0 && boardFileDTO.getFileDTOList() != null){
+            for(FileDTO fileDTO : boardFileDTO.getFileDTOList()) {
+                fileDTO.setBno(bno);
+                bno = fileRepository.save(convertDtoToEntity(fileDTO)).getBno();
+            }
+        }
+        return bno;
+      }
+
+
+
     @Override
     public Page<BoardDTO> getList(int pageNo) {
         // pageNo = 0 부터 시작. 근데 표기는 1임
@@ -57,21 +86,46 @@ public class BoardServiceImpl implements BoardService {
     }
 
 
+
+
+//    @Override
+//    public Object getDetail(long bno) {
+//        /* findById : 아이디(PK)를 주고 해당 객체를 리턴
+//           findById의 리턴타입 Optional<Board> 타입으로 리턴
+//           Optional<T> : nullPointException이 발생하지 않도록 도와줌.
+//           Optional.isEmpty() : null일 경우 확인 가능 true / false
+//           Optional.isPresent() : 값이 있는지 확인 true / false
+//           Optional.get() : board 값(객체) 가져오기
+//        */
+//        Optional<Board> optional = boardRepository.findById(bno);
+//        if(optional.isPresent()) {
+//            BoardDTO bdto = convertEntityToDto(optional.get());
+//            return bdto;
+//        }
+//        return null;
+//    }
     @Override
-    public Object getDetail(long bno) {
-        /* findById : 아이디(PK)를 주고 해당 객체를 리턴
-           findById의 리턴타입 Optional<Board> 타입으로 리턴
-           Optional<T> : nullPointException이 발생하지 않도록 도와줌.
-           Optional.isEmpty() : null일 경우 확인 가능 true / false
-           Optional.isPresent() : 값이 있는지 확인 true / false
-           Optional.get() : board 값(객체) 가져오기
-        */
+    public BoardFileDTO getDetail(Long bno) {
+
         Optional<Board> optional = boardRepository.findById(bno);
+
         if(optional.isPresent()) {
             BoardDTO bdto = convertEntityToDto(optional.get());
-            return bdto;
+
+            // file bno에 일치하는 모든 파일 리스트를 가져오기
+            // select * from file where bno = #{bno}
+            List<File> flist = fileRepository.findByBno(bno);
+            List<FileDTO> fileDTOList = flist.stream()
+                    .map(f -> convertEntityToDto(f)).toList();
+            BoardFileDTO boardFileDTO = new BoardFileDTO(bdto, fileDTOList);
+            return boardFileDTO;
         }
-        return null;
+    return null;
+    }
+
+    @Override
+    public Long modify(BoardFileDTO boardFileDTO) {
+        return 0L;
     }
 
     @Override
@@ -106,4 +160,6 @@ public class BoardServiceImpl implements BoardService {
         }
         return null;
     }
+
+
 }

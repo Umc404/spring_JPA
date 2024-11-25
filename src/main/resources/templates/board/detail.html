@@ -5,35 +5,37 @@
 
 <div layout:fragment="content" class="container-md">
   <h1>Board Detail</h1>
+
+  <th:block th:with="boardDTO=${boardFileDTO.boardDTO}">
 <form action="/board/modify" method="post" id="modForm">
 <div class="mb-3">
   <label for="bno" class="form-label">No.</label>
-  <input type="hidden" name="bno" th:value="${bdto.bno }">
-  <input type="text" class="form-control" id="bno" name="bno" th:value="${bdto.bno }" readonly>
+  <input type="hidden" name="bno" th:value="${boardDTO.bno }">
+  <input type="text" class="form-control" id="bno" name="bno" th:value="${boardDTO.bno }" readonly>
 </div>
 <div class="mb-3">
   <label for="title" class="form-label">Title</label>
-  <input type="text" class="form-control" id="title" name="title" th:value="${bdto.title }" readonly>
+  <input type="text" class="form-control" id="title" name="title" th:value="${boardDTO.title }" readonly>
 </div>
 <div class="mb-3">
   <label for="writer" class="form-label">Writer</label>
-  <input type="text" class="form-control" id="writer" name="writer" th:value="${bdto.writer }" readonly>
-  <span class="badge text-bg-info">[[${#strings.substring(bdto.regAt,0,10) }]]</span>
+  <input type="text" class="form-control" id="writer" name="writer" th:value="${boardDTO.writer }" readonly>
+  <span class="badge text-bg-info">[[${#strings.substring(boardDTO.regAt,0,10) }]]</span>
 </div>
 <div class="mb-3">
   <label for="content" class="form-label">Content</label>
-  <textarea class="form-control" id="content" name="content" rows="3" readonly>[[${bdto.content}]]</textarea>
+  <textarea class="form-control" id="content" name="content" rows="3" readonly>[[${boardDTO.content}]]</textarea>
 </div>
   <button type="button" class="btn btn-primary" id="listBtn">listBtn</button>
   <button type="button" class="btn btn-secondary" id="modBtn">modBtn</button>
   <button type="button" class="btn btn-danger" id="delBtn">Remove</button>
 </form>
   <form action="/board/delete" method="get" id="delForm">
-    <input type="hidden" name="bno" th:value="${bdto.bno}">
+    <input type="hidden" name="bno" th:value="${boardDTO.bno}">
   </form>
   <!--/* post */-->
   <div class="input-group mb-3">
-      <span class="input-group-text" id="cmtWriter"> jpa writer
+      <span class="input-group-text" id="cmtWriter" th:text="${#authentication.getPrincipal().userDTO.nickName}">
       </span>
     <input type="text" id="cmtText" class="form-control" placeholder="write comment.." aria-label="Username" aria-describedby="basic-addon1">
     <button type="button" id="cmtAdd" class="btn btn-secondary">Post</button>
@@ -74,7 +76,7 @@
     </div>
   </div>
   <script th:inline="javascript">
-    let bnoVal = [[${bdto.bno}]]
+    let bnoVal = [[${boardDTO.bno}]]
     console.log(bnoVal);
   </script>
   <script th:src="@{/js/boardDetail.js}"></script>
@@ -82,5 +84,6 @@
   <script>
     spreadCommentList(bnoVal);
   </script>
+  </th:block>
 </div>
 
