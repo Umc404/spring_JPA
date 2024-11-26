@@ -75,12 +75,13 @@ public class BoardServiceImpl implements BoardService {
 
 
     @Override
-    public Page<BoardDTO> getList(int pageNo) {
+    public Page<BoardDTO> getList(int pageNo, String type, String keyword) {
         // pageNo = 0 부터 시작. 근데 표기는 1임
         // 0 => limit 0, 10 / 1 => limit 10, 10
         Pageable pageable = PageRequest.of(pageNo, 10,
                 Sort.by("bno").descending());
-        Page<Board> list = boardRepository.findAll(pageable);
+        Page<Board> list = boardRepository.searchBoard(type, keyword, pageable);
+        // type, keyword, pageable 값 주고, Page<Board> list 리턴받는 메서드 생성
         Page<BoardDTO> bdtoList = list.map(b -> convertEntityToDto(b));
         return bdtoList;
     }

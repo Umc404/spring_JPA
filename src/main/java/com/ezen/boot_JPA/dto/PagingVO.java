@@ -15,9 +15,14 @@ public class PagingVO {
     private boolean hasPrev, hasNext;
     private int pageNo;
 
-    public PagingVO(Page<BoardDTO> list, int pageNo) {
+    private String type;
+    private String keyword;
+
+    public PagingVO(Page<BoardDTO> list, int pageNo, String type, String keyword) {
         this.pageNo = pageNo+1;
         this.totalPage = list.getTotalPages();
+        this.type = type;
+        this.keyword = keyword;
 
         this.endPage = (int)Math.ceil(this.pageNo/10.0) * 10;
         this.startPage = endPage - 9;

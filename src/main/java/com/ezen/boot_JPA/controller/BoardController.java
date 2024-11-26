@@ -60,29 +60,43 @@ public class BoardController {
         m.addAttribute("list", boardList);
     }*/
 
+//    @GetMapping("/list")
+//    public void detail(@RequestParam(value = "pageNo",
+//            defaultValue = "0", required = false)int pageNo, Model m) {
+//        // 화면에서 들어오는 pageNo = 1 / 0으로 처리되야함.
+//        // 화면에서 들어오는 pageNo = 2 / 1으로 처리되야함.
+//        log.info(">> pageNo > {}", pageNo);
+//        pageNo = (pageNo == 0 ? 0 : pageNo - 1);
+//        log.info(">> pageNo > {}", pageNo);
+//
+//        Page<BoardDTO> list = boardService.getList(pageNo);
+//
+//        log.info(">>>> list > {}", list.toString());
+//        log.info(">>>> totalCount > {}", list.getTotalElements());      // 전체 글 수
+//        log.info(">>>> totalPage > {}", list.getTotalPages());          // 전체 페이지 수 => realEndPage
+//        log.info(">>>> pageNumber > {}", list.getNumber());             // 전체 페이지 번호 => pageNo
+//        log.info(">>>> pageSize > {}", list.getSize());                 // 한 페이지에 표시되는 길이 => qty
+//        log.info(">>>> next > {}", list.hasNext());                     // next 여부
+//        log.info(">>>> prev > {}", list.hasPrevious());                 // prev 여부
+//
+//        PagingVO pgvo = new PagingVO(list, pageNo);
+//
+//        m.addAttribute("list", list);
+//        m.addAttribute("pgvo", pgvo);
+//    }
+
     @GetMapping("/list")
-    public void detail(@RequestParam(value = "pageNo",
-            defaultValue = "0", required = false)int pageNo, Model m) {
-        // 화면에서 들어오는 pageNo = 1 / 0으로 처리되야함.
-        // 화면에서 들어오는 pageNo = 2 / 1으로 처리되야함.
-        log.info(">> pageNo > {}", pageNo);
+    public void detail(@RequestParam(value = "pageNo", defaultValue = "0", required = false)int pageNo,
+                       @RequestParam(value = "type", required = false) String type,
+                       @RequestParam(value = "keyword", required = false) String keyword,
+                       Model m) {
+
         pageNo = (pageNo == 0 ? 0 : pageNo - 1);
-        log.info(">> pageNo > {}", pageNo);
-
-        Page<BoardDTO> list = boardService.getList(pageNo);
-
-        log.info(">>>> list > {}", list.toString());
-        log.info(">>>> totalCount > {}", list.getTotalElements());      // 전체 글 수
-        log.info(">>>> totalPage > {}", list.getTotalPages());          // 전체 페이지 수 => realEndPage
-        log.info(">>>> pageNumber > {}", list.getNumber());             // 전체 페이지 번호 => pageNo
-        log.info(">>>> pageSize > {}", list.getSize());                 // 한 페이지에 표시되는 길이 => qty
-        log.info(">>>> next > {}", list.hasNext());                     // next 여부
-        log.info(">>>> prev > {}", list.hasPrevious());                 // prev 여부
-
-        PagingVO pgvo = new PagingVO(list, pageNo);
-
+        Page<BoardDTO> list = boardService.getList(pageNo, type, keyword);     // type, keyword 추가하여 ServiceImpl로 송신
+        PagingVO pgvo = new PagingVO(list, pageNo, type, keyword);
         m.addAttribute("list", list);
         m.addAttribute("pgvo", pgvo);
+
     }
 
     @GetMapping("/detail")
