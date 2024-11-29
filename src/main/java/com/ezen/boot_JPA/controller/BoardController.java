@@ -5,16 +5,14 @@ import com.ezen.boot_JPA.dto.BoardFileDTO;
 import com.ezen.boot_JPA.dto.FileDTO;
 import com.ezen.boot_JPA.dto.PagingVO;
 import com.ezen.boot_JPA.handler.FileHandler;
+import com.ezen.boot_JPA.handler.FileRemoveHandler;
 import com.ezen.boot_JPA.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -29,7 +27,7 @@ public class BoardController {
     private final FileHandler fileHandler;
 
     @GetMapping("/register")
-    public void register() {    }
+    public void register() {}
 
 //    @PostMapping("/register")
 //    public String register(BoardDTO bdto) {
@@ -42,14 +40,17 @@ public class BoardController {
 //    }
 
     @PostMapping("/register")
-    public String register(BoardDTO bdto, @RequestParam(value = "files", required = false)
-                            MultipartFile[] files) {
+    public String register(BoardDTO bdto,
+                           @RequestParam(name = "files", required = false)MultipartFile[] files) {
         List<FileDTO> flist = null;
         if(files!= null && files[0].getSize() > 0) {
             // 파일 핸들러 작업
             flist = fileHandler.uploadFiles(files);
+            log.info(">>>> flist > {}", flist);
         }
         long bno = boardService.insert(new BoardFileDTO(bdto, flist));
+        log.info(">> isOk > {}", bno);
+        log.info(">> flist > {}", flist);
         return "/index";
     }
 
@@ -125,4 +126,14 @@ public class BoardController {
         log.info(">>> delete board > {}", delBno>0? "Ok":"Fail");
         return "redirect:/board/list";
     }
+
+//    @ResponseBody
+//    @DeleteMapping("/file/{uuid}")
+//    public String fileRemove(@PathVariable("uuid") String uuid){
+//        FileDTO fileDTO = boardService.getFile(uuid);
+//        long bno = boardService.fileRemove(uuid);
+//        FileRemoveHandler frh = new FileRemoveHandler();
+//        boolean isDel = frh.deleteFile(fileDTO);
+//        return bno > 0 ? "1" : "0";
+//    }
 }

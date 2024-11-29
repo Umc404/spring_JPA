@@ -7,11 +7,8 @@
 <div layout:fragment="content">
     <div class="container-md">
         <h1>SpringBoot_JPA User info modify</h1>
-        [[${#authentication.getPrincipal()}]]
         <hr>
-        [[${#authentication.getPrincipal().userDTO}]]
-        [[${#authentication.getPrincipal().userDTO.nickName}]]
-        <hr>
+<!--        [[${#authentication.getPrincipal().userDTO}]]-->
         <form action="/user/modify" method="post">
             <div class="mb-3">
                 <label for="e" class="form-label">email</label>

@@ -82,6 +82,7 @@ public interface BoardService {
 
     Long insert(BoardDTO bdto);
 
+    // 파일추가 등록
     long insert(BoardFileDTO boardFileDTO);
 
     Long modify(BoardFileDTO boardFileDTO);

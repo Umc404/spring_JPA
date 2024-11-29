@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 
 @Configuration
 @EnableWebSecurity
@@ -25,12 +26,20 @@ public class SecurityConfig {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
+    // 주석에서 추가한 이유 : /error?continue 페이지 이동 방지
+
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
-        return http.csrf(csrf -> csrf.disable())
+        HttpSessionRequestCache requestCache = new HttpSessionRequestCache();       // 기존에서 추가
+        requestCache.setMatchingRequestParameterName(null);                         // 기존에서 추가
+
+        return http
+                .csrf(csrf -> csrf.disable())                                       // 기존에서 추가
+                .requestCache(request -> request                                    // 기존에서 추가
+                        .requestCache(requestCache))
                 .authorizeHttpRequests(
                         (authorize) -> authorize
-                                .requestMatchers("/js/**","/dist/**","/upload/**","/",
+                                .requestMatchers("/js/**","/dist/**","/upload/**","/","/img/**",
                                         "/index","/user/join","/user/login","/board/list",
                                         "/comment/list/**").permitAll()
                                 .requestMatchers("/user/list").hasAnyRole("ADMIN")

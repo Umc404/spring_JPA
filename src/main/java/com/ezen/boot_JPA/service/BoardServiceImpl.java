@@ -24,8 +24,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 public class BoardServiceImpl implements BoardService {
+
     private final BoardRepository boardRepository;
     private final FileRepository fileRepository;
+
     @Override
     public Long insert(BoardDTO bdto) {
         // 저장 객체는 Board

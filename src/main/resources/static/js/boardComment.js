@@ -22,7 +22,7 @@ document.getElementById("cmtAdd").addEventListener('click',()=>{
         if(result =='1') {
             alert("댓글 등록 완료");
             cmtText.value = "";
-            spreadCommentList(bnoVal,page);
+            spreadCommentList(bnoVal);
         }
     })
 })
@@ -55,13 +55,13 @@ function spreadCommentList(bnoVal,page=1) {
                 li += `<div class="ms-2 me-auto">`;
                 li += `<div class="fw-bold">${cdto.writer}</div>`;
                 li += `${cdto.content} </div>`;
-                li += `<span class="badge text-bg-primary rounded-pill">regDate</span>`;
+                li += `<span class="badge text-bg-primary rounded-pill">${cdto.regAt.substr(0,10)}</span>`;
                 li += `<button type="button" class="btn btn-primary mod" data-bs-toggle="modal" data-bs-target="#myModal">수정</button>`
                 li += `<button type="button" class="btn btn-danger del">삭제</button>`;
                 li += `</li>`;
                 ul.innerHTML += li;
             }
-            // 더보기 버튼. 구현은 아직; 페이지처리 한 후에 속 채워넣기
+            // 더보기 버튼.
             let moreBtn = document.getElementById("moreBtn");
 
             if(page < result.totalPages) {

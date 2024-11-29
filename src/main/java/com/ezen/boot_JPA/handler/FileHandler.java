@@ -45,8 +45,8 @@ public class FileHandler {
             fileDTO.setFileName(onlyFileName);
 
             UUID uuid = UUID.randomUUID();
-//            String uuidStr = uuid.toString();
-            fileDTO.setUuid(uuid.toString());
+            String uuidStr = uuid.toString();
+            fileDTO.setUuid(uuidStr);
 
             String fullFileName = uuid.toString()+"_"+onlyFileName;
             String thumbFileName = uuid.toString()+"_th_"+onlyFileName;
